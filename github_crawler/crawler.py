@@ -22,7 +22,7 @@ class GithubCrawler:
         for _ in range(max_retries):
             try:
                 proxies = self._get_random_proxy()
-                response = requests.get(url, proxies=proxies, timeout=10)
+                response = requests.get(url, proxies=proxies, timeout=10, headers={"Accept": "text/html"})
                 response.raise_for_status()
                 return response
             except requests.RequestException:
@@ -56,7 +56,7 @@ class GithubCrawler:
         response = self._request_with_retry(url)
 
         soup = BeautifulSoup(response.content, 'html.parser')
-        urls = [link['href'] for link in soup.select('a.v-align-middle')]
+        urls = [link['href'] for link in soup.select("div.search-title a")]
 
         results = []
         for url in urls:
